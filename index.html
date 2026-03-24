@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人记账</title>
+  <style>
+    :root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin: 0; background: #f5f7fb; min-height: 100vh; display: grid; place-items: center; padding: 12px; }
+    .card { width: min(640px, 100%); background: #fff; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.08); padding: 16px; }
+    h1 { margin: 0 0 12px; text-align: center; font-size: 1.2rem; }
+    form, .tools, .github-box { display: grid; gap: 10px; }
+    label { display: grid; gap: 5px; font-size: .94rem; color: #1f2937; }
+    input, button { font: inherit; }
+    input { padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; width: 100%; box-sizing: border-box; }
+    input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+    input[readonly] { background: #f3f4f6; color: #374151; }
+    .btn-row { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+    button { border: 0; border-radius: 10px; padding: 10px; color: #fff; background: #2563eb; font-weight: 600; cursor: pointer; }
+    button.secondary { background: #4b5563; }
+    button.success { background: #059669; }
+    .hint { color: #4b5563; font-size: .82rem; line-height: 1.45; margin: 4px 0 0; }
+    details { border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; background: #fcfcfd; }
+    summary { font-weight: 600; cursor: pointer; }
+    .records-title { margin: 10px 0 6px; font-size: .96rem; font-weight: 600; }
+    .records { max-height: 220px; overflow: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; background: #f9fafb; }
+    .record-item { padding: 8px; border-bottom: 1px dashed #d1d5db; font-size: .88rem; display: grid; gap: 2px; }
+    .record-item:last-child { border-bottom: 0; }
+    #status { min-height: 22px; font-size: .85rem; color: #374151; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>个人记账（提交后自动同步 GitHub）</h1>
+
+    <form id="expense-form" autocomplete="off">
+      <label>日期<input id="date" name="date" type="date" required /></label>
+      <label>消费名称<input id="name" name="name" type="text" placeholder="例如：午餐" required /></label>
+      <label>
+        消费类型
+        <input id="category" name="category" list="category-options" placeholder="选择或手动输入" required />
+        <datalist id="category-options">
+          <option value="食品"></option><option value="百货"></option><option value="健康"></option><option value="交通"></option>
+        </datalist>
+      </label>
+      <label>消费金额<input id="amount" name="amount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="请输入数字" required /></label>
+      <button id="submit-btn" type="submit">提交</button>
+    </form>
+
+    <section class="tools">
+      <p class="hint">提交后会保存到本机并自动同步到 GitHub（需先保存 Token）。CSV 文件可直接用 Excel 打开。</p>
+      <div class="btn-row">
+        <button id="export-json" type="button" class="secondary">导出 JSON</button>
+        <button id="export-csv" type="button" class="secondary">导出 CSV</button>
+        <button id="clear-records" type="button" class="secondary">清空本机</button>
+      </div>
+    </section>
+
+    <details open>
+      <summary>GitHub 同步配置（owner/repo/branch/path 已固定）</summary>
+      <div class="github-box">
+        <label>owner<input id="gh-owner" type="text" readonly /></label>
+        <label>repo<input id="gh-repo" type="text" readonly /></label>
+        <label>branch<input id="gh-branch" type="text" readonly /></label>
+        <label>JSON path<input id="gh-path" type="text" readonly /></label>
+        <label>CSV path（Excel 可下载）<input id="gh-csv-path" type="text" readonly /></label>
+        <label>Token（仅首次输入，保存到本机）<input id="gh-token" type="password" placeholder="粘贴新的 GitHub token" autocomplete="off" /></label>
+        <button id="save-token" type="button" class="success">保存 Token 并启用自动上传</button>
+        <button id="sync-now" type="button" class="success">立即上传一次</button>
+        <div id="status" aria-live="polite"></div>
+      </div>
+    </details>
+
+    <p class="records-title">最近记录</p>
+    <section id="records" class="records"></section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'expense_records_v1';
+    const TOKEN_KEY = 'expense_github_token_v1';
+    const DEFAULT_GH = {
+      owner: 'KeguangCheng',
+      repo: 'jizhangkg.github.io',
+      branch: 'main',
+      path: 'data/expenses.json',
+      csvPath: 'data/expenses.csv'
+    };
+
+    const form = document.querySelector('#expense-form');
+    const submitBtn = document.querySelector('#submit-btn');
+    const dateInput = document.querySelector('#date');
+    const recordsContainer = document.querySelector('#records');
+    const statusEl = document.querySelector('#status');
+
+    document.querySelector('#gh-owner').value = DEFAULT_GH.owner;
+    document.querySelector('#gh-repo').value = DEFAULT_GH.repo;
+    document.querySelector('#gh-branch').value = DEFAULT_GH.branch;
+    document.querySelector('#gh-path').value = DEFAULT_GH.path;
+    document.querySelector('#gh-csv-path').value = DEFAULT_GH.csvPath;
+
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+
+    const getRecords = () => {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    };
+
+    const saveRecords = (records) => localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    const getSavedToken = () => localStorage.getItem(TOKEN_KEY) || '';
+    const saveToken = (token) => localStorage.setItem(TOKEN_KEY, token);
+
+    const renderRecords = () => {
+      const records = getRecords();
+      if (!records.length) {
+        recordsContainer.innerHTML = '<p class="hint">暂无记录，先提交一条吧。</p>';
+        return;
+      }
+      recordsContainer.innerHTML = records.slice().reverse().map((item, index) => `
+        <article class="record-item">
+          <strong>#${records.length - index} ${item.name}</strong>
+          <span>日期：${item.date}</span>
+          <span>类型：${item.category}</span>
+          <span>金额：¥${Number(item.amount).toFixed(2)}</span>
+        </article>
+      `).join('');
+    };
+
+    const downloadFile = (filename, content, mimeType) => {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    const toCsv = (records) => {
+      const header = 'date,name,category,amount';
+      const rows = records.map((r) => {
+        const safe = (v) => `"${String(v).replaceAll('"', '""')}"`;
+        return [safe(r.date), safe(r.name), safe(r.category), safe(r.amount)].join(',');
+      });
+      return [header, ...rows].join('\n');
+    };
+
+    const utf8ToBase64 = (text) => btoa(unescape(encodeURIComponent(text)));
+
+    const getConfig = () => ({ ...DEFAULT_GH, token: getSavedToken() });
+
+    const fetchExistingSha = async (path, config) => {
+      const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}?ref=${encodeURIComponent(config.branch)}`;
+      const resp = await fetch(url, { headers: { Authorization: `Bearer ${config.token}` } });
+      if (resp.status === 404) return null;
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`读取 ${path} 失败：${resp.status} ${text}`);
+      }
+      const data = await resp.json();
+      return data.sha;
+    };
+
+    const uploadContent = async (path, content, message, config) => {
+      const sha = await fetchExistingSha(path, config);
+      const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}`;
+      const body = {
+        message,
+        content: utf8ToBase64(content),
+        branch: config.branch,
+        ...(sha ? { sha } : {})
+      };
+
+      const resp = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${config.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`上传 ${path} 失败：${resp.status} ${text}`);
+      }
+    };
+
+    const uploadRecordsToGitHub = async () => {
+      const config = getConfig();
+      if (!config.token) {
+        throw new Error('请先点击“保存 Token 并启用自动上传”。');
+      }
+
+      const records = getRecords();
+      if (!records.length) {
+        throw new Error('暂无记录可上传。');
+      }
+
+      const now = new Date().toISOString();
+      const jsonPayload = JSON.stringify({ exportedAt: now, records }, null, 2);
+      const csvPayload = toCsv(records);
+
+      await uploadContent(config.path, jsonPayload, `chore: update bookkeeping json ${now}`, config);
+      await uploadContent(config.csvPath, csvPayload, `chore: update bookkeeping csv ${now}`, config);
+    };
+
+    const runUpload = async () => {
+      try {
+        statusEl.textContent = '上传中，请稍候...';
+        await uploadRecordsToGitHub();
+        statusEl.textContent = '✅ JSON + CSV 已自动写入 GitHub，可直接下载 CSV 用 Excel 打开。';
+      } catch (error) {
+        statusEl.textContent = `❌ ${error.message}`;
+      }
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const record = {
+        date: formData.get('date'),
+        name: formData.get('name'),
+        category: formData.get('category'),
+        amount: formData.get('amount')
+      };
+
+      const records = getRecords();
+      records.push(record);
+      saveRecords(records);
+
+      form.reset();
+      dateInput.value = today;
+      form.querySelector('#name').focus();
+      renderRecords();
+
+      submitBtn.disabled = true;
+      await runUpload();
+      submitBtn.disabled = false;
+    });
+
+    document.querySelector('#save-token').addEventListener('click', () => {
+      const input = document.querySelector('#gh-token');
+      const token = input.value.trim();
+      if (!token) {
+        statusEl.textContent = '请先粘贴 token。';
+        return;
+      }
+      saveToken(token);
+      input.value = '';
+      statusEl.textContent = '✅ Token 已保存到本机。后续提交将自动上传。';
+    });
+
+    document.querySelector('#sync-now').addEventListener('click', runUpload);
+
+    document.querySelector('#export-json').addEventListener('click', () => {
+      const records = getRecords();
+      if (!records.length) return alert('暂无记录可导出');
+      const payload = JSON.stringify({ exportedAt: new Date().toISOString(), records }, null, 2);
+      downloadFile(`expenses-${today}.json`, payload, 'application/json');
+    });
+
+    document.querySelector('#export-csv').addEventListener('click', () => {
+      const records = getRecords();
+      if (!records.length) return alert('暂无记录可导出');
+      downloadFile(`expenses-${today}.csv`, toCsv(records), 'text/csv;charset=utf-8');
+    });
+
+    document.querySelector('#clear-records').addEventListener('click', () => {
+      if (!confirm('确定清空本机所有记账数据吗？')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      renderRecords();
+      statusEl.textContent = '已清空本机数据。';
+    });
+
+    if (getSavedToken()) {
+      statusEl.textContent = '已检测到本机已保存 Token，提交后将自动上传到 GitHub。';
+    }
+
+    renderRecords();
+  </script>
+</body>
+</html>
