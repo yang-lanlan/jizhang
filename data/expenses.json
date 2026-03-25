@@ -1,11 +1,4 @@
 {
-  "exportedAt": "2026-03-25T00:50:21.333Z",
-  "records": [
-    {
-      "date": "2026-03-25",
-      "name": "地铁",
-      "category": "交通",
-      "amount": "9"
-    }
-  ]
+  "exportedAt": "2026-03-25T00:50:23.168Z",
+  "records": []
 }
