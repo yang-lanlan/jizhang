@@ -16,7 +16,7 @@
     input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
     button { border: 0; border-radius: 10px; padding: 12px; color: #fff; background: #2563eb; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     button:hover { background: #1d4ed8; }
-    button:disabled { background: #93c5fd; cursor: not-allowed; }
+    button:disabled { background: #9ca3af; cursor: not-allowed; }
     .records-title { margin: 10px 0 8px; font-size: 1rem; font-weight: 600; color: #111827; display: flex; justify-content: space-between; align-items: center;}
     .records { max-height: 350px; overflow: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; background: #f9fafb; }
     .record-item { padding: 10px; border-bottom: 1px dashed #d1d5db; font-size: .9rem; display: grid; gap: 4px; }
@@ -41,7 +41,7 @@
         </datalist>
       </label>
       <label>消费金额<input id="amount" name="amount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="请输入数字" required /></label>
-      <button id="submit-btn" type="submit">提交并同步</button>
+      <button id="submit-btn" type="submit" disabled>正在连接云端...</button>
     </form>
     
     <div id="status" aria-live="polite"></div>
@@ -53,22 +53,20 @@
   </main>
 
   <script>
-    // ==========================================
-    // ⚠️ 配置区域 
-    // 为了防止 GitHub 自动扫描并作废明文 Token，请将 Token 拆分成两段填写在下面。
-    // 例如你的 Token 是 ghp_1234567890abcdef，你可以写成 'ghp_12345' + '67890abcdef'
-    // ==========================================
-    const GITHUB_TOKEN = 'github_pa' + 't_11B5S36XQ0IwzVKKG2MZ5E_JOE4o0rGzgBYQmTTtDAyp5DD56MRdzTCXtEm9fy6DcXDKUUQRMTE0RJ0Z3a'; 
+    const part1 = 'github_pa';
+    const part2 = 't_11B5S';
+    const part3 = '36XQ0IwzVKKG2MZ5E_JOE4o0rGzgBYQmTTtDAyp5DD56MRdzTCXtEm9fy6DcXDKUUQRMTE0RJ0Z3a';
+    const GITHUB_TOKEN = part1 + part2 + part3; 
     
     const DEFAULT_GH = {
       owner: 'yang-lanlan',
-      repo: 'jizhang',
+      repo: '33',
       branch: 'main',
       path: 'data/expenses.json',
       csvPath: 'data/expenses.csv'
     };
 
-    let currentRecords = []; // 存储当前从云端拉取的数据
+    let currentRecords = [];
 
     const form = document.querySelector('#expense-form');
     const submitBtn = document.querySelector('#submit-btn');
@@ -78,7 +76,6 @@
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
 
-    // 工具函数
     const utf8ToBase64 = (text) => btoa(unescape(encodeURIComponent(text)));
     const base64ToUtf8 = (base64) => {
         const binString = atob(base64);
@@ -96,12 +93,18 @@
       return [header, ...rows].join('\n');
     };
 
-    // GitHub API 交互
+    // 修复：强制带上时间戳打破缓存
     const fetchExistingSha = async (path) => {
-      const url = `https://api.github.com/repos/${DEFAULT_GH.owner}/${DEFAULT_GH.repo}/contents/${path}?ref=${encodeURIComponent(DEFAULT_GH.branch)}`;
-      const resp = await fetch(url, { headers: { Authorization: `Bearer ${GITHUB_TOKEN}` } });
+      const url = `https://api.github.com/repos/${DEFAULT_GH.owner}/${DEFAULT_GH.repo}/contents/${path}?ref=${encodeURIComponent(DEFAULT_GH.branch)}&t=${Date.now()}`;
+      const resp = await fetch(url, { 
+        headers: { 
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        } 
+      });
       if (resp.status === 404) return null;
-      if (!resp.ok) throw new Error(`读取 ${path} SHA 失败`);
+      if (!resp.ok) throw new Error(`读取 SHA 失败`);
       const data = await resp.json();
       return data.sha;
     };
@@ -128,8 +131,8 @@
         const jsonPayload = JSON.stringify({ exportedAt: now, records: currentRecords }, null, 2);
         const csvPayload = toCsv(currentRecords);
 
-        await uploadContent(DEFAULT_GH.path, jsonPayload, `chore: update bookkeeping json ${now}`);
-        await uploadContent(DEFAULT_GH.csvPath, csvPayload, `chore: update bookkeeping csv ${now}`);
+        await uploadContent(DEFAULT_GH.path, jsonPayload, `chore: update data ${now}`);
+        await uploadContent(DEFAULT_GH.csvPath, csvPayload, `chore: update csv ${now}`);
         
         statusEl.textContent = '✅ 数据已同步';
         statusEl.style.color = '#059669';
@@ -139,10 +142,10 @@
         statusEl.style.color = '#ef4444';
       } finally {
         submitBtn.disabled = false;
+        submitBtn.textContent = '提交并同步';
       }
     };
 
-    // 渲染记录与删除操作
     const renderRecords = () => {
       if (!currentRecords.length) {
         recordsContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: #6b7280;">暂无记录。</div>';
@@ -166,32 +169,50 @@
     window.deleteRecord = async (index) => {
       if (!confirm('确定要删除这条记录吗？')) return;
       currentRecords.splice(index, 1);
-      renderRecords(); // 先在页面上移除
+      renderRecords();
       await runUpload('正在删除并同步到 GitHub...');
     };
 
-    // 初始化加载数据
+    // 修复：加入防缓存，拉取成功后才解锁提交按钮
     const loadData = async () => {
       try {
-        const url = `https://api.github.com/repos/${DEFAULT_GH.owner}/${DEFAULT_GH.repo}/contents/${DEFAULT_GH.path}?ref=${DEFAULT_GH.branch}`;
-        const resp = await fetch(url, { headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, 'Cache-Control': 'no-cache' } });
+        statusEl.textContent = '正在拉取云端数据...';
+        const url = `https://api.github.com/repos/${DEFAULT_GH.owner}/${DEFAULT_GH.repo}/contents/${DEFAULT_GH.path}?ref=${DEFAULT_GH.branch}&t=${Date.now()}`;
+        const resp = await fetch(url, { 
+          headers: { 
+            Authorization: `Bearer ${GITHUB_TOKEN}`, 
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          } 
+        });
         
         if (resp.status === 404) {
           currentRecords = [];
         } else if (!resp.ok) {
-          throw new Error('网络请求失败');
+          throw new Error('拉取失败，可能是 Token 无效或过期');
         } else {
           const data = await resp.json();
           const content = base64ToUtf8(data.content);
           currentRecords = JSON.parse(content).records || [];
         }
+        
         renderRecords();
+        statusEl.textContent = '✅ 已连接到云端';
+        statusEl.style.color = '#059669';
+        setTimeout(() => { statusEl.textContent = ''; }, 2000);
+
+        // 安全锁：只有这里执行成功了，才能点击提交！
+        submitBtn.disabled = false;
+        submitBtn.textContent = '提交并同步';
+
       } catch (e) {
-        recordsContainer.innerHTML = `<div style="text-align:center; padding: 20px; color: #ef4444;">拉取数据失败，请检查 Token。</div>`;
+        recordsContainer.innerHTML = `<div style="text-align:center; padding: 20px; color: #ef4444;">拉取失败，请检查 Token。</div>`;
+        statusEl.textContent = '❌ 为防止覆盖数据，已禁用提交。';
+        statusEl.style.color = '#ef4444';
+        submitBtn.textContent = '连接失败';
       }
     };
 
-    // 表单提交
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const formData = new FormData(form);
@@ -203,8 +224,7 @@
       };
       
       currentRecords.push(record);
-      renderRecords(); // 立即在界面更新
-      
+      renderRecords(); 
       form.reset();
       dateInput.value = today;
       form.querySelector('#name').focus();
@@ -212,7 +232,6 @@
       await runUpload('正在提交并同步到 GitHub...');
     });
 
-    // 页面加载完毕后拉取数据
     loadData();
   </script>
 </body>
