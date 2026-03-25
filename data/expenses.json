@@ -1,11 +1,17 @@
 {
-  "exportedAt": "2026-03-24T20:23:40.577Z",
+  "exportedAt": "2026-03-25T00:48:18.036Z",
   "records": [
     {
       "date": "2026-03-24",
       "name": "444",
       "category": "百货",
       "amount": "2"
+    },
+    {
+      "date": "2026-03-25",
+      "name": "22",
+      "category": "百货",
+      "amount": "111"
     }
   ]
 }
