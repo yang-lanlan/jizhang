@@ -178,9 +178,7 @@
         const url = `https://api.github.com/repos/${DEFAULT_GH.owner}/${DEFAULT_GH.repo}/contents/${DEFAULT_GH.path}?ref=${DEFAULT_GH.branch}&t=${Date.now()}`;
         const resp = await fetch(url, { 
           headers: { 
-            Authorization: `Bearer ${GITHUB_TOKEN}`, 
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache'
+            Authorization: `Bearer ${GITHUB_TOKEN}`
           } 
         });
         
