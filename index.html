@@ -33,14 +33,18 @@
     <h1>个人记账</h1>
     <form id="expense-form" autocomplete="off">
       <label>日期<input id="date" name="date" type="date" required /></label>
-      <label>消费名称<input id="name" name="name" type="text" placeholder="例如：午餐" required /></label>
-      <label>消费类型
-        <input id="category" name="category" list="category-options" placeholder="选择或手动输入" required />
-        <datalist id="category-options">
-          <option value="食品"></option><option value="百货"></option><option value="健康"></option><option value="交通"></option>
-        </datalist>
+      <label>消费名称<input id="name" name="name" type="text" required /></label>
+      <label>消费类型 
+        <select id="category" name="category" required>
+          <option value="食品">食品</option>
+          <option value="百货">百货</option>
+          <option value="健康">健康</option>
+          <option value="交通">交通</option>
+          <option value="娱乐">娱乐</option>
+          <option value="其他">其他</option>
+        </select>
       </label>
-      <label>消费金额<input id="amount" name="amount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="请输入数字" required /></label>
+      <label>消费金额<input id="amount" name="amount" type="number" inputmode="decimal" step="0.01" min="0" required /></label>
       <button id="submit-btn" type="submit" disabled>正在连接云端...</button>
     </form>
     
@@ -75,6 +79,32 @@
     const statusEl = document.querySelector('#status');
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
+    
+    const nameInput = document.querySelector('#name');
+    const categorySelect = document.querySelector('#category');
+    
+    // 定义关键词字典（为了忽略大小写，英文字母都存小写）
+    const categoryRules = {
+      '食品': ['weee', 'wf', 'af', 'yami', 'wholefood', 'wholefoods', 'acme', '缺德舅', '大华', '日料', '寿司', '海底捞', '火锅', '星巴克', '麦当劳', '冰块'],
+      '百货': ['target', 'muji', '阿里巴巴', 'ikea'],
+      '交通': ['地铁', '公交', '打车'],
+      '健康': ['挂号费', '氟西汀', '减肥针', '呼吸机']
+    };
+    
+    // 监听消费名称的输入
+    nameInput.addEventListener('input', (e) => {
+      const inputValue = e.target.value.toLowerCase(); // 转为小写以统一匹配
+      
+      // 遍历字典，如果输入内容包含了某个关键词，就自动切换对应的分类
+      for (const [category, keywords] of Object.entries(categoryRules)) {
+        if (keywords.some(keyword => inputValue.includes(keyword))) {
+          categorySelect.value = category;
+          break; // 匹配到一个后就停止
+        }
+      }
+    });
+    
+
 
     const utf8ToBase64 = (text) => btoa(unescape(encodeURIComponent(text)));
     const base64ToUtf8 = (base64) => {
