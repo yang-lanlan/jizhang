@@ -1,11 +1,17 @@
 {
-  "exportedAt": "2026-03-26T05:57:37.189Z",
+  "exportedAt": "2026-03-26T05:58:02.209Z",
   "records": [
     {
       "date": "2026-03-26",
       "name": "拖鞋",
       "category": "百货",
       "amount": "36"
+    },
+    {
+      "date": "2026-03-26",
+      "name": "weee",
+      "category": "食品",
+      "amount": "39"
     }
   ]
 }
