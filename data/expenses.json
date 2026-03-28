@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-03-27T18:28:18.429Z",
+  "exportedAt": "2026-03-28T00:02:05.085Z",
   "records": [
     {
       "date": "2026-03-26",
@@ -54,6 +54,12 @@
       "name": "weee",
       "category": "食品",
       "amount": "36"
+    },
+    {
+      "date": "2026-03-28",
+      "name": "星巴克",
+      "category": "食品",
+      "amount": "7"
     }
   ]
 }
