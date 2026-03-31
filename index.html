@@ -7,34 +7,54 @@
   <style>
     :root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     body { margin: 0; background: #f5f7fb; min-height: 100vh; display: grid; place-items: center; padding: 12px; }
-    .card { width: min(640px, 100%); background: #fff; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.08); padding: 20px; box-sizing: border-box; }
+    .card { width: min(760px, 100%); background: #fff; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.08); padding: 20px; box-sizing: border-box; }
     h1 { margin: 0 0 16px; text-align: center; font-size: 1.3rem; color: #111827; }
-    form { display: grid; gap: 12px; margin-bottom: 20px;}
-    label { display: grid; gap: 6px; font-size: .94rem; color: #374151; font-weight: 500;}
-    input, button { font: inherit; }
-    input { padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; width: 100%; box-sizing: border-box; }
-    input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+    h2 { margin: 0 0 12px; font-size: 1rem; color: #111827; }
+    form { display: grid; gap: 12px; margin-bottom: 16px; }
+    label { display: grid; gap: 6px; font-size: .94rem; color: #374151; font-weight: 500; }
+    input, button, select { font: inherit; }
+    input, select { padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; width: 100%; box-sizing: border-box; }
+    input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
     button { border: 0; border-radius: 10px; padding: 12px; color: #fff; background: #2563eb; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     button:hover { background: #1d4ed8; }
     button:disabled { background: #9ca3af; cursor: not-allowed; }
-    .records-title { margin: 10px 0 8px; font-size: 1rem; font-weight: 600; color: #111827; display: flex; justify-content: space-between; align-items: center;}
+    .btn-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .danger { background: #ef4444; }
+    .danger:hover { background: #dc2626; }
+    .secondary { background: #4b5563; }
+    .secondary:hover { background: #374151; }
+
+    .records-title { margin: 10px 0 8px; font-size: 1rem; font-weight: 600; color: #111827; display: flex; justify-content: space-between; align-items: center; }
     .records { max-height: 350px; overflow: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; background: #f9fafb; }
     .record-item { padding: 10px; border-bottom: 1px dashed #d1d5db; font-size: .9rem; display: grid; gap: 4px; }
     .record-item:last-child { border-bottom: 0; }
-    .record-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .record-name { font-weight: 600; color: #111827; font-size: 1rem;}
-    .delete-btn { background: #ef4444; padding: 4px 10px; font-size: 0.8rem; border-radius: 6px; width: auto; }
+    .record-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 8px; }
+    .record-name { font-weight: 600; color: #111827; font-size: 1rem; }
+    .record-ops { display: flex; gap: 6px; }
+    .mini-btn { padding: 5px 9px; font-size: .78rem; border-radius: 6px; width: auto; }
+    .delete-btn { background: #ef4444; }
     .delete-btn:hover { background: #dc2626; }
-    #status { min-height: 22px; font-size: .85rem; color: #4b5563; text-align: center; margin-top: 8px; font-weight: 500;}
+    .edit-btn { background: #0ea5e9; }
+    .edit-btn:hover { background: #0284c7; }
+
+    .stats { margin-top: 16px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fcfcfd; }
+    .stats-filter { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .stats-summary { margin: 10px 0; color: #111827; font-size: .9rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    th, td { border-bottom: 1px solid #e5e7eb; padding: 8px 6px; text-align: left; }
+    th:last-child, td:last-child { text-align: right; }
+
+    #status { min-height: 22px; font-size: .85rem; color: #4b5563; text-align: center; margin-top: 8px; font-weight: 500; }
   </style>
 </head>
 <body>
   <main class="card">
     <h1>个人记账</h1>
+
     <form id="expense-form" autocomplete="off">
       <label>日期<input id="date" name="date" type="date" required /></label>
       <label>消费名称<input id="name" name="name" type="text" required /></label>
-      <label>消费类型 
+      <label>消费类型
         <select id="category" name="category" required>
           <option value="食品">食品</option>
           <option value="百货">百货</option>
@@ -45,14 +65,35 @@
         </select>
       </label>
       <label>消费金额<input id="amount" name="amount" type="number" inputmode="decimal" step="0.01" min="0" required /></label>
-      <button id="submit-btn" type="submit" disabled>正在连接云端...</button>
+      <div class="btn-row">
+        <button id="submit-btn" type="submit" disabled>正在连接云端...</button>
+        <button id="cancel-edit-btn" type="button" class="secondary" style="display:none;">取消修改</button>
+      </div>
     </form>
-    
+
     <div id="status" aria-live="polite"></div>
 
-    <div class="records-title">最近记录 (云端同步)</div>
+    <div class="records-title">最近记录（按日期从新到旧）</div>
     <section id="records" class="records">
       <div style="text-align:center; padding: 20px; color: #6b7280;">正在拉取数据...</div>
+    </section>
+
+    <section class="stats">
+      <h2>统计</h2>
+      <div class="stats-filter">
+        <label>起始日期<input id="stats-start" type="date" /></label>
+        <label>终止日期<input id="stats-end" type="date" /></label>
+      </div>
+      <div style="margin-top:8px;"><button id="stats-apply-btn" type="button" class="secondary">更新统计区间</button></div>
+      <div id="stats-summary" class="stats-summary">暂无统计数据</div>
+      <table>
+        <thead>
+          <tr><th>类别</th><th>金额</th><th>日均金额</th><th>占比</th></tr>
+        </thead>
+        <tbody id="stats-body">
+          <tr><td colspan="4">暂无数据</td></tr>
+        </tbody>
+      </table>
     </section>
   </main>
 
@@ -60,8 +101,8 @@
     const part1 = 'github_pa';
     const part2 = 't_11B5S';
     const part3 = '36XQ0IwzVKKG2MZ5E_JOE4o0rGzgBYQmTTtDAyp5DD56MRdzTCXtEm9fy6DcXDKUUQRMTE0RJ0Z3a';
-    const GITHUB_TOKEN = part1 + part2 + part3; 
-    
+    const GITHUB_TOKEN = part1 + part2 + part3;
+
     const DEFAULT_GH = {
       owner: 'yang-lanlan',
       repo: '33',
@@ -71,47 +112,48 @@
     };
 
     let currentRecords = [];
+    let editingId = null;
 
     const form = document.querySelector('#expense-form');
     const submitBtn = document.querySelector('#submit-btn');
+    const cancelEditBtn = document.querySelector('#cancel-edit-btn');
     const dateInput = document.querySelector('#date');
     const recordsContainer = document.querySelector('#records');
     const statusEl = document.querySelector('#status');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.value = today;
-    
     const nameInput = document.querySelector('#name');
     const categorySelect = document.querySelector('#category');
-    
-    // 定义关键词字典（为了忽略大小写，英文字母都存小写）
+
+    const statsStartInput = document.querySelector('#stats-start');
+    const statsEndInput = document.querySelector('#stats-end');
+    const statsSummaryEl = document.querySelector('#stats-summary');
+    const statsBodyEl = document.querySelector('#stats-body');
+
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+
     const categoryRules = {
       '食品': ['weee', 'wf', 'af', 'yami', 'wholefood', 'wholefoods', 'acme', '缺德舅', '大华', '日料', '寿司', '海底捞', '火锅', '星巴克', '麦当劳', '冰块'],
       '百货': ['target', 'muji', '阿里巴巴', 'ikea'],
       '交通': ['地铁', '公交', '打车'],
       '健康': ['挂号费', '氟西汀', '减肥针', '呼吸机']
     };
-    
-    // 监听消费名称的输入
+
     nameInput.addEventListener('input', (e) => {
-      const inputValue = e.target.value.toLowerCase(); // 转为小写以统一匹配
-      
-      // 遍历字典，如果输入内容包含了某个关键词，就自动切换对应的分类
+      const inputValue = e.target.value.toLowerCase();
       for (const [category, keywords] of Object.entries(categoryRules)) {
         if (keywords.some(keyword => inputValue.includes(keyword))) {
           categorySelect.value = category;
-          break; // 匹配到一个后就停止
+          break;
         }
       }
     });
-    
-
 
     const utf8ToBase64 = (text) => btoa(unescape(encodeURIComponent(text)));
     const base64ToUtf8 = (base64) => {
-        const binString = atob(base64);
-        const bytes = new Uint8Array(binString.length);
-        for (let i = 0; i < binString.length; i++) bytes[i] = binString.charCodeAt(i);
-        return new TextDecoder('utf-8').decode(bytes);
+      const binString = atob(base64);
+      const bytes = new Uint8Array(binString.length);
+      for (let i = 0; i < binString.length; i++) bytes[i] = binString.charCodeAt(i);
+      return new TextDecoder('utf-8').decode(bytes);
     };
 
     const toCsv = (records) => {
@@ -123,16 +165,27 @@
       return [header, ...rows].join('\n');
     };
 
-    // 修复：强制带上时间戳打破缓存
+    const normalizeRecord = (raw) => ({
+      id: raw.id || crypto.randomUUID(),
+      date: raw.date,
+      name: raw.name,
+      category: raw.category,
+      amount: Number(raw.amount || 0),
+      createdAt: raw.createdAt || new Date().toISOString(),
+      updatedAt: raw.updatedAt || raw.createdAt || new Date().toISOString()
+    });
+
+    const sortRecords = (records) => records.slice().sort((a, b) => {
+      const byDate = new Date(b.date) - new Date(a.date);
+      if (byDate !== 0) return byDate;
+      return String(b.updatedAt).localeCompare(String(a.updatedAt));
+    });
+
     const fetchExistingSha = async (path) => {
       const url = `https://api.github.com/repos/${DEFAULT_GH.owner}/${DEFAULT_GH.repo}/contents/${path}?ref=${encodeURIComponent(DEFAULT_GH.branch)}&t=${Date.now()}`;
-      const resp = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`
-        }
-      });
+      const resp = await fetch(url, { headers: { Authorization: `Bearer ${GITHUB_TOKEN}` } });
       if (resp.status === 404) return null;
-      if (!resp.ok) throw new Error(`读取 SHA 失败`);
+      if (!resp.ok) throw new Error('读取 SHA 失败');
       const data = await resp.json();
       return data.sha;
     };
@@ -161,7 +214,7 @@
 
         await uploadContent(DEFAULT_GH.path, jsonPayload, `chore: update data ${now}`);
         await uploadContent(DEFAULT_GH.csvPath, csvPayload, `chore: update csv ${now}`);
-        
+
         statusEl.textContent = '✅ 数据已同步';
         statusEl.style.color = '#059669';
         setTimeout(() => { statusEl.textContent = ''; }, 3000);
@@ -170,7 +223,7 @@
         statusEl.style.color = '#ef4444';
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = '提交并同步';
+        submitBtn.textContent = editingId ? '保存修改并同步' : '提交并同步';
       }
     };
 
@@ -179,39 +232,118 @@
         recordsContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: #6b7280;">暂无记录。</div>';
         return;
       }
-      recordsContainer.innerHTML = currentRecords.slice().reverse().map((item, reverseIndex) => {
-        const originalIndex = currentRecords.length - 1 - reverseIndex;
-        return `
-          <article class="record-item">
-            <div class="record-header">
-              <span class="record-name">${item.name}</span>
-              <button type="button" class="delete-btn" onclick="deleteRecord(${originalIndex})">删除</button>
+
+      const sorted = sortRecords(currentRecords);
+      recordsContainer.innerHTML = sorted.map((item) => `
+        <article class="record-item">
+          <div class="record-header">
+            <span class="record-name">${item.name}</span>
+            <div class="record-ops">
+              <button type="button" class="mini-btn edit-btn" onclick="editRecord('${item.id}')">修改</button>
+              <button type="button" class="mini-btn delete-btn" onclick="deleteRecord('${item.id}')">删除</button>
             </div>
-            <span>日期：${item.date} &nbsp;|&nbsp; 类型：${item.category}</span>
-            <span style="color:#ef4444; font-weight:600;">金额：¥${Number(item.amount).toFixed(2)}</span>
-          </article>
-        `;
+          </div>
+          <span>日期：${item.date} &nbsp;|&nbsp; 类型：${item.category}</span>
+          <span style="color:#ef4444; font-weight:600;">金额：¥${Number(item.amount).toFixed(2)}</span>
+        </article>
+      `).join('');
+    };
+
+    const daysBetweenInclusive = (start, end) => {
+      const ms = new Date(end) - new Date(start);
+      return Math.max(1, Math.floor(ms / (24 * 60 * 60 * 1000)) + 1);
+    };
+
+    const renderStats = () => {
+      const start = statsStartInput.value;
+      const end = statsEndInput.value;
+
+      if (!start || !end || start > end) {
+        statsSummaryEl.textContent = '请选择有效的起止日期。';
+        statsBodyEl.innerHTML = '<tr><td colspan="4">暂无数据</td></tr>';
+        return;
+      }
+
+      const filtered = currentRecords.filter((r) => r.date >= start && r.date <= end);
+      const totalAmount = filtered.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const byCategory = {};
+
+      filtered.forEach((item) => {
+        byCategory[item.category] = (byCategory[item.category] || 0) + Number(item.amount || 0);
+      });
+
+      const dayCount = daysBetweenInclusive(start, end);
+      const dailyAvg = totalAmount / dayCount;
+
+      statsSummaryEl.textContent = `区间 ${start} ~ ${end}：总计 ¥${totalAmount.toFixed(2)}，日均 ¥${dailyAvg.toFixed(2)}（按 ${dayCount} 天）`;
+
+      const categories = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+      if (!categories.length) {
+        statsBodyEl.innerHTML = '<tr><td colspan="4">该区间暂无消费记录</td></tr>';
+        return;
+      }
+
+      statsBodyEl.innerHTML = categories.map(([category, amount]) => {
+        const categoryDailyAvg = amount / dayCount;
+        const ratio = totalAmount > 0 ? `${(amount / totalAmount * 100).toFixed(1)}%` : '0.0%';
+        return `<tr><td>${category}</td><td>¥${amount.toFixed(2)}</td><td>¥${categoryDailyAvg.toFixed(2)}</td><td>${ratio}</td></tr>`;
       }).join('');
     };
 
-    window.deleteRecord = async (index) => {
+    const getCurrentMonthRange = () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const start = new Date(y, m, 1).toISOString().split('T')[0];
+      const end = new Date(y, m + 1, 0).toISOString().split('T')[0];
+      return { start, end };
+    };
+
+    const resetFormMode = () => {
+      editingId = null;
+      submitBtn.textContent = '提交并同步';
+      cancelEditBtn.style.display = 'none';
+      form.reset();
+      dateInput.value = today;
+      nameInput.focus();
+    };
+
+    window.editRecord = (id) => {
+      const target = currentRecords.find((item) => item.id === id);
+      if (!target) return;
+      editingId = id;
+      dateInput.value = target.date;
+      nameInput.value = target.name;
+      categorySelect.value = target.category;
+      document.querySelector('#amount').value = Number(target.amount);
+      submitBtn.textContent = '保存修改并同步';
+      cancelEditBtn.style.display = 'block';
+      statusEl.textContent = '正在修改历史记录，保存后会同步到云端。';
+      statusEl.style.color = '#2563eb';
+    };
+
+    window.deleteRecord = async (id) => {
       if (!confirm('确定要删除这条记录吗？')) return;
-      currentRecords.splice(index, 1);
+      currentRecords = currentRecords.filter((item) => item.id !== id);
       renderRecords();
+      renderStats();
       await runUpload('正在删除并同步到 GitHub...');
     };
 
-    // 修复：加入防缓存，拉取成功后才解锁提交按钮
+    cancelEditBtn.addEventListener('click', () => {
+      resetFormMode();
+      statusEl.textContent = '已取消修改。';
+      statusEl.style.color = '#4b5563';
+    });
+
+    document.querySelector('#stats-apply-btn').addEventListener('click', renderStats);
+
     const loadData = async () => {
       try {
         statusEl.textContent = '正在拉取云端数据...';
         const url = `https://api.github.com/repos/${DEFAULT_GH.owner}/${DEFAULT_GH.repo}/contents/${DEFAULT_GH.path}?ref=${DEFAULT_GH.branch}&t=${Date.now()}`;
-        const resp = await fetch(url, { 
-          headers: { 
-            Authorization: `Bearer ${GITHUB_TOKEN}`
-          } 
-        });
-        
+        const resp = await fetch(url, { headers: { Authorization: `Bearer ${GITHUB_TOKEN}` } });
+
         if (resp.status === 404) {
           currentRecords = [];
         } else if (!resp.ok) {
@@ -219,20 +351,21 @@
         } else {
           const data = await resp.json();
           const content = base64ToUtf8(data.content);
-          currentRecords = JSON.parse(content).records || [];
+          const parsed = JSON.parse(content).records || [];
+          currentRecords = parsed.map(normalizeRecord);
         }
-        
+
         renderRecords();
+        renderStats();
+
         statusEl.textContent = '✅ 已连接到云端';
         statusEl.style.color = '#059669';
         setTimeout(() => { statusEl.textContent = ''; }, 2000);
 
-        // 安全锁：只有这里执行成功了，才能点击提交！
         submitBtn.disabled = false;
         submitBtn.textContent = '提交并同步';
-
       } catch (e) {
-        recordsContainer.innerHTML = `<div style="text-align:center; padding: 20px; color: #ef4444;">拉取失败，请检查 Token。</div>`;
+        recordsContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: #ef4444;">拉取失败，请检查 Token。</div>';
         statusEl.textContent = '❌ 为防止覆盖数据，已禁用提交。';
         statusEl.style.color = '#ef4444';
         submitBtn.textContent = '连接失败';
@@ -242,21 +375,37 @@
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const formData = new FormData(form);
-      const record = {
+      const nowIso = new Date().toISOString();
+      const record = normalizeRecord({
+        id: editingId || crypto.randomUUID(),
         date: formData.get('date'),
         name: formData.get('name'),
         category: formData.get('category'),
-        amount: formData.get('amount')
-      };
-      
-      currentRecords.push(record);
-      renderRecords(); 
-      form.reset();
-      dateInput.value = today;
-      form.querySelector('#name').focus();
-      
-      await runUpload('正在提交并同步到 GitHub...');
+        amount: Number(formData.get('amount')),
+        createdAt: nowIso,
+        updatedAt: nowIso
+      });
+
+      if (editingId) {
+        currentRecords = currentRecords.map((item) => {
+          if (item.id !== editingId) return item;
+          return { ...item, ...record, id: item.id, createdAt: item.createdAt || record.createdAt, updatedAt: nowIso };
+        });
+      } else {
+        currentRecords.push(record);
+      }
+
+      const wasEditing = Boolean(editingId);
+      renderRecords();
+      renderStats();
+      resetFormMode();
+
+      await runUpload(wasEditing ? '正在保存修改并同步到 GitHub...' : '正在提交并同步到 GitHub...');
     });
+
+    const monthRange = getCurrentMonthRange();
+    statsStartInput.value = monthRange.start;
+    statsEndInput.value = monthRange.end;
 
     loadData();
   </script>
