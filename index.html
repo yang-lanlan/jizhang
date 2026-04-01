@@ -7,7 +7,7 @@
   <style>
     :root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     body { margin: 0; background: #f5f7fb; min-height: 100vh; display: grid; place-items: center; padding: 12px; }
-    .card { width: min(760px, 100%); background: #fff; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.08); padding: 20px; box-sizing: border-box; }
+    .card { width: min(900px, 100%); background: #fff; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.08); padding: 20px; box-sizing: border-box; }
     h1 { margin: 0 0 16px; text-align: center; font-size: 1.3rem; color: #111827; }
     h2 { margin: 0 0 12px; font-size: 1rem; color: #111827; }
     form { display: grid; gap: 12px; margin-bottom: 16px; }
@@ -19,8 +19,6 @@
     button:hover { background: #1d4ed8; }
     button:disabled { background: #9ca3af; cursor: not-allowed; }
     .btn-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-    .danger { background: #ef4444; }
-    .danger:hover { background: #dc2626; }
     .secondary { background: #4b5563; }
     .secondary:hover { background: #374151; }
 
@@ -31,6 +29,9 @@
     .record-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 8px; }
     .record-name { font-weight: 600; color: #111827; font-size: 1rem; }
     .record-ops { display: flex; gap: 6px; }
+    .record-line { display: flex; flex-wrap: wrap; gap: 16px; color: #374151; }
+    .amount-usd { color: #dc2626; font-weight: 700; }
+    .amount-cny { color: #2563eb; font-weight: 700; }
     .mini-btn { padding: 5px 9px; font-size: .78rem; border-radius: 6px; width: auto; }
     .delete-btn { background: #ef4444; }
     .delete-btn:hover { background: #dc2626; }
@@ -39,7 +40,7 @@
 
     .stats { margin-top: 16px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fcfcfd; }
     .stats-filter { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-    .stats-summary { margin: 10px 0; color: #111827; font-size: .9rem; }
+    .stats-summary { margin: 10px 0; color: #111827; font-size: .9rem; line-height: 1.6; }
     table { width: 100%; border-collapse: collapse; font-size: .88rem; }
     th, td { border-bottom: 1px solid #e5e7eb; padding: 8px 6px; text-align: left; }
     th:last-child, td:last-child { text-align: right; }
@@ -64,7 +65,7 @@
           <option value="其他">其他</option>
         </select>
       </label>
-      <label>消费金额<input id="amount" name="amount" type="number" inputmode="decimal" step="0.01" min="0" required /></label>
+      <label>消费金额（USD）<input id="amount" name="amount" type="number" inputmode="decimal" step="0.01" min="0" required /></label>
       <div class="btn-row">
         <button id="submit-btn" type="submit" disabled>正在连接云端...</button>
         <button id="cancel-edit-btn" type="button" class="secondary" style="display:none;">取消修改</button>
@@ -88,10 +89,17 @@
       <div id="stats-summary" class="stats-summary">暂无统计数据</div>
       <table>
         <thead>
-          <tr><th>类别</th><th>金额</th><th>日均金额</th><th>占比</th></tr>
+          <tr>
+            <th>类别</th>
+            <th>金额（USD）</th>
+            <th>金额（CNY）</th>
+            <th>日均金额（USD）</th>
+            <th>日均金额（CNY）</th>
+            <th>占比</th>
+          </tr>
         </thead>
         <tbody id="stats-body">
-          <tr><td colspan="4">暂无数据</td></tr>
+          <tr><td colspan="6">暂无数据</td></tr>
         </tbody>
       </table>
     </section>
@@ -110,6 +118,8 @@
       path: 'data/expenses.json',
       csvPath: 'data/expenses.csv'
     };
+
+    const USD_TO_CNY = 7;
 
     let currentRecords = [];
     let editingId = null;
@@ -156,11 +166,21 @@
       return new TextDecoder('utf-8').decode(bytes);
     };
 
+    const formatUSD = (n) => `$${Number(n).toFixed(2)}`;
+    const formatCNY = (n) => `¥${Number(n).toFixed(2)}`;
+    const usdToCny = (usd) => Number(usd) * USD_TO_CNY;
+
     const toCsv = (records) => {
-      const header = 'date,name,category,amount';
+      const header = 'date,name,category,amount_usd,amount_cny';
       const rows = records.map((r) => {
         const safe = (v) => `"${String(v).replaceAll('"', '""')}"`;
-        return [safe(r.date), safe(r.name), safe(r.category), safe(r.amount)].join(',');
+        return [
+          safe(r.date),
+          safe(r.name),
+          safe(r.category),
+          safe(Number(r.amount).toFixed(2)),
+          safe(usdToCny(r.amount).toFixed(2))
+        ].join(',');
       });
       return [header, ...rows].join('\n');
     };
@@ -209,7 +229,7 @@
         submitBtn.disabled = true;
 
         const now = new Date().toISOString();
-        const jsonPayload = JSON.stringify({ exportedAt: now, records: currentRecords }, null, 2);
+        const jsonPayload = JSON.stringify({ exportedAt: now, exchangeRate: '1 USD = 7 CNY', records: currentRecords }, null, 2);
         const csvPayload = toCsv(currentRecords);
 
         await uploadContent(DEFAULT_GH.path, jsonPayload, `chore: update data ${now}`);
@@ -243,8 +263,14 @@
               <button type="button" class="mini-btn delete-btn" onclick="deleteRecord('${item.id}')">删除</button>
             </div>
           </div>
-          <span>日期：${item.date} &nbsp;|&nbsp; 类型：${item.category}</span>
-          <span style="color:#ef4444; font-weight:600;">金额：¥${Number(item.amount).toFixed(2)}</span>
+          <div class="record-line">
+            <span>日期：${item.date}</span>
+            <span>类型：${item.category}</span>
+          </div>
+          <div class="record-line">
+            <span class="amount-usd">金额（USD）：${formatUSD(item.amount)}</span>
+            <span class="amount-cny">金额（CNY）：${formatCNY(usdToCny(item.amount))}</span>
+          </div>
         </article>
       `).join('');
     };
@@ -260,12 +286,13 @@
 
       if (!start || !end || start > end) {
         statsSummaryEl.textContent = '请选择有效的起止日期。';
-        statsBodyEl.innerHTML = '<tr><td colspan="4">暂无数据</td></tr>';
+        statsBodyEl.innerHTML = '<tr><td colspan="6">暂无数据</td></tr>';
         return;
       }
 
       const filtered = currentRecords.filter((r) => r.date >= start && r.date <= end);
-      const totalAmount = filtered.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const totalAmountUsd = filtered.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const totalAmountCny = usdToCny(totalAmountUsd);
       const byCategory = {};
 
       filtered.forEach((item) => {
@@ -273,20 +300,35 @@
       });
 
       const dayCount = daysBetweenInclusive(start, end);
-      const dailyAvg = totalAmount / dayCount;
+      const dailyAvgUsd = totalAmountUsd / dayCount;
+      const dailyAvgCny = totalAmountCny / dayCount;
 
-      statsSummaryEl.textContent = `区间 ${start} ~ ${end}：总计 ¥${totalAmount.toFixed(2)}，日均 ¥${dailyAvg.toFixed(2)}（按 ${dayCount} 天）`;
+      statsSummaryEl.innerHTML = `
+        区间 ${start} ~ ${end}：总计 ${formatUSD(totalAmountUsd)} / ${formatCNY(totalAmountCny)}<br>
+        日均 ${formatUSD(dailyAvgUsd)} / ${formatCNY(dailyAvgCny)}（按 ${dayCount} 天，汇率 1:7）
+      `;
 
       const categories = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
       if (!categories.length) {
-        statsBodyEl.innerHTML = '<tr><td colspan="4">该区间暂无消费记录</td></tr>';
+        statsBodyEl.innerHTML = '<tr><td colspan="6">该区间暂无消费记录</td></tr>';
         return;
       }
 
-      statsBodyEl.innerHTML = categories.map(([category, amount]) => {
-        const categoryDailyAvg = amount / dayCount;
-        const ratio = totalAmount > 0 ? `${(amount / totalAmount * 100).toFixed(1)}%` : '0.0%';
-        return `<tr><td>${category}</td><td>¥${amount.toFixed(2)}</td><td>¥${categoryDailyAvg.toFixed(2)}</td><td>${ratio}</td></tr>`;
+      statsBodyEl.innerHTML = categories.map(([category, amountUsd]) => {
+        const amountCny = usdToCny(amountUsd);
+        const categoryDailyAvgUsd = amountUsd / dayCount;
+        const categoryDailyAvgCny = amountCny / dayCount;
+        const ratio = totalAmountUsd > 0 ? `${(amountUsd / totalAmountUsd * 100).toFixed(1)}%` : '0.0%';
+        return `
+          <tr>
+            <td>${category}</td>
+            <td>${formatUSD(amountUsd)}</td>
+            <td>${formatCNY(amountCny)}</td>
+            <td>${formatUSD(categoryDailyAvgUsd)}</td>
+            <td>${formatCNY(categoryDailyAvgCny)}</td>
+            <td>${ratio}</td>
+          </tr>
+        `;
       }).join('');
     };
 
@@ -294,8 +336,10 @@
       const now = new Date();
       const y = now.getFullYear();
       const m = now.getMonth();
+
       const start = new Date(y, m, 1).toISOString().split('T')[0];
-      const end = new Date(y, m + 1, 0).toISOString().split('T')[0];
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0];
+
       return { start, end };
     };
 
