@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-02T20:33:34.116Z",
+  "exportedAt": "2026-04-02T21:25:24.362Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -244,6 +244,15 @@
       "amount": 18,
       "createdAt": "2026-04-02T20:33:34.106Z",
       "updatedAt": "2026-04-02T20:33:34.106Z"
+    },
+    {
+      "id": "1a37c7f3-ec16-4538-b9c4-fda4e9514a64",
+      "date": "2026-04-02",
+      "name": "味千拉面",
+      "category": "食品",
+      "amount": 19,
+      "createdAt": "2026-04-02T21:25:24.352Z",
+      "updatedAt": "2026-04-02T21:25:24.352Z"
     }
   ]
 }
