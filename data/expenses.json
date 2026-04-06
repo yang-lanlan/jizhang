@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-06T19:38:26.008Z",
+  "exportedAt": "2026-04-06T21:46:29.963Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -334,6 +334,15 @@
       "amount": 5.5,
       "createdAt": "2026-04-06T19:38:25.998Z",
       "updatedAt": "2026-04-06T19:38:25.998Z"
+    },
+    {
+      "id": "cb961a12-1a3a-4091-8c16-e8fad43844b2",
+      "date": "2026-04-06",
+      "name": "呼吸机",
+      "category": "健康",
+      "amount": 13,
+      "createdAt": "2026-04-06T21:46:29.951Z",
+      "updatedAt": "2026-04-06T21:46:29.951Z"
     }
   ]
 }
