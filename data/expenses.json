@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-07T22:55:50.168Z",
+  "exportedAt": "2026-04-07T23:32:55.974Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -379,6 +379,15 @@
       "amount": 12,
       "createdAt": "2026-04-07T22:55:50.157Z",
       "updatedAt": "2026-04-07T22:55:50.157Z"
+    },
+    {
+      "id": "24de9f26-000e-4054-98cf-0f2fdfaffb2a",
+      "date": "2026-04-07",
+      "name": "muji",
+      "category": "百货",
+      "amount": 3,
+      "createdAt": "2026-04-07T23:32:55.963Z",
+      "updatedAt": "2026-04-07T23:32:55.963Z"
     }
   ]
 }
