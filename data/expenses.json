@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-07T21:42:51.508Z",
+  "exportedAt": "2026-04-07T22:55:30.401Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -352,6 +352,15 @@
       "amount": 24,
       "createdAt": "2026-04-07T21:42:51.499Z",
       "updatedAt": "2026-04-07T21:42:51.499Z"
+    },
+    {
+      "id": "957b8187-379e-4f46-8713-602cd8b40ebc",
+      "date": "2026-04-07",
+      "name": "lidl",
+      "category": "食品",
+      "amount": 30,
+      "createdAt": "2026-04-07T22:55:30.389Z",
+      "updatedAt": "2026-04-07T22:55:30.389Z"
     }
   ]
 }
