@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-12T21:21:18.165Z",
+  "exportedAt": "2026-04-12T22:47:04.171Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -478,6 +478,15 @@
       "amount": 277.8,
       "createdAt": "2026-04-12T21:21:18.154Z",
       "updatedAt": "2026-04-12T21:21:18.154Z"
+    },
+    {
+      "id": "96ba0221-0103-41f4-955d-546a2aff0d91",
+      "date": "2026-04-12",
+      "name": "wf",
+      "category": "食品",
+      "amount": 21,
+      "createdAt": "2026-04-12T22:47:04.160Z",
+      "updatedAt": "2026-04-12T22:47:04.160Z"
     }
   ]
 }
