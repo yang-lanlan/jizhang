@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-14T20:17:38.431Z",
+  "exportedAt": "2026-04-14T23:21:56.607Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -559,6 +559,15 @@
       "amount": 6,
       "createdAt": "2026-04-14T20:17:38.421Z",
       "updatedAt": "2026-04-14T20:17:38.421Z"
+    },
+    {
+      "id": "0cb47728-f069-4e38-85b6-fa6106c0060a",
+      "date": "2026-04-14",
+      "name": "二手滑板",
+      "category": "百货",
+      "amount": 20,
+      "createdAt": "2026-04-14T23:21:56.595Z",
+      "updatedAt": "2026-04-14T23:21:56.595Z"
     }
   ]
 }
