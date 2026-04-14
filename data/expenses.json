@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-14T14:44:31.987Z",
+  "exportedAt": "2026-04-14T15:22:26.791Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -532,6 +532,15 @@
       "amount": -2972.55,
       "createdAt": "2026-04-14T14:43:06.915Z",
       "updatedAt": "2026-04-14T14:43:06.915Z"
+    },
+    {
+      "id": "86710144-1899-4ba6-afa4-9aee8d749e07",
+      "date": "2026-04-13",
+      "name": "冰块",
+      "category": "食品",
+      "amount": 4,
+      "createdAt": "2026-04-14T15:22:26.779Z",
+      "updatedAt": "2026-04-14T15:22:26.779Z"
     }
   ]
 }
