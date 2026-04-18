@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-18T02:42:52.260Z",
+  "exportedAt": "2026-04-18T02:43:05.191Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -676,6 +676,15 @@
       "amount": 12,
       "createdAt": "2026-04-18T02:42:12.894Z",
       "updatedAt": "2026-04-18T02:42:12.894Z"
+    },
+    {
+      "id": "bc1d4bc3-f60b-4eaa-a17b-1f455e43d83f",
+      "date": "2026-04-18",
+      "name": "二手珐琅锅",
+      "category": "百货",
+      "amount": 25,
+      "createdAt": "2026-04-18T02:43:05.176Z",
+      "updatedAt": "2026-04-18T02:43:05.176Z"
     }
   ]
 }
