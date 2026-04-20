@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-20T15:40:21.525Z",
+  "exportedAt": "2026-04-20T20:12:03.662Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -739,6 +739,15 @@
       "amount": 26,
       "createdAt": "2026-04-20T15:40:21.515Z",
       "updatedAt": "2026-04-20T15:40:21.515Z"
+    },
+    {
+      "id": "fa87327f-f6fd-458c-b027-ad3d02e8df6c",
+      "date": "2026-04-20",
+      "name": "船票",
+      "category": "交通",
+      "amount": 10,
+      "createdAt": "2026-04-20T20:12:03.651Z",
+      "updatedAt": "2026-04-20T20:12:03.651Z"
     }
   ]
 }
