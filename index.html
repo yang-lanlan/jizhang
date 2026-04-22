@@ -121,6 +121,7 @@
     };
 
     const USD_TO_CNY = 7;
+    const APP_TIMEZONE = 'America/New_York';
 
     let currentRecords = [];
     let editingId = null;
@@ -140,7 +141,18 @@
     const statsSummaryEl = document.querySelector('#stats-summary');
     const statsBodyEl = document.querySelector('#stats-body');
 
-    const today = new Date().toISOString().split('T')[0];
+    const formatDateInTimezone = (date = new Date(), timeZone = APP_TIMEZONE) => {
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      return formatter.format(date);
+    };
+
+    const getTodayInEastern = () => formatDateInTimezone(new Date(), APP_TIMEZONE);
+    const today = getTodayInEastern();
     dateInput.value = today;
 
     const categoryRules = {
@@ -148,6 +160,23 @@
       '百货': ['target', 'muji', '阿里巴巴', 'ikea'],
       '交通': ['地铁', '公交', '打车'],
       '健康': ['挂号费', '氟西汀', '减肥针', '呼吸机']
+    };
+
+    const inferCategoryFromName = (name) => {
+      const inputValue = String(name || '').trim().toLowerCase();
+      if (!inputValue) return null;
+
+      if (inputValue.includes('卖淫')) {
+        return '收入';
+      }
+
+      for (const [category, keywords] of Object.entries(categoryRules)) {
+        if (keywords.some(keyword => inputValue.includes(keyword))) {
+          return category;
+        }
+      }
+
+      return null;
     };
 
     const syncAmountSignWithCategory = () => {
@@ -165,16 +194,11 @@
     };
 
     nameInput.addEventListener('input', (e) => {
-      if (categorySelect.value === '收入') return;
+      const inferredCategory = inferCategoryFromName(e.target.value);
+      if (!inferredCategory) return;
 
-      const inputValue = e.target.value.toLowerCase();
-      for (const [category, keywords] of Object.entries(categoryRules)) {
-        if (keywords.some(keyword => inputValue.includes(keyword))) {
-          categorySelect.value = category;
-          syncAmountSignWithCategory();
-          break;
-        }
-      }
+      categorySelect.value = inferredCategory;
+      syncAmountSignWithCategory();
     });
 
     categorySelect.addEventListener('change', syncAmountSignWithCategory);
@@ -191,9 +215,21 @@
     const formatCNY = (n) => `¥${Number(n).toFixed(2)}`;
     const usdToCny = (usd) => Number(usd) * USD_TO_CNY;
 
+    const parseDateForSort = (dateString) => {
+      if (!dateString) return 0;
+      return new Date(`${dateString}T00:00:00`).getTime();
+    };
+
+    const sortRecords = (records) => records.slice().sort((a, b) => {
+      const byDate = parseDateForSort(b.date) - parseDateForSort(a.date);
+      if (byDate !== 0) return byDate;
+      return String(b.updatedAt).localeCompare(String(a.updatedAt));
+    });
+
     const toCsv = (records) => {
       const header = 'date,name,category,amount_usd,amount_cny';
-      const rows = records.map((r) => {
+      const sortedRecords = sortRecords(records);
+      const rows = sortedRecords.map((r) => {
         const safe = (v) => `"${String(v).replaceAll('"', '""')}"`;
         return [
           safe(r.date),
@@ -214,12 +250,6 @@
       amount: Number(raw.amount || 0),
       createdAt: raw.createdAt || new Date().toISOString(),
       updatedAt: raw.updatedAt || raw.createdAt || new Date().toISOString()
-    });
-
-    const sortRecords = (records) => records.slice().sort((a, b) => {
-      const byDate = new Date(b.date) - new Date(a.date);
-      if (byDate !== 0) return byDate;
-      return String(b.updatedAt).localeCompare(String(a.updatedAt));
     });
 
     const fetchExistingSha = async (path) => {
@@ -248,6 +278,8 @@
         statusEl.textContent = loadingText;
         statusEl.style.color = '#2563eb';
         submitBtn.disabled = true;
+
+        currentRecords = sortRecords(currentRecords);
 
         const now = new Date().toISOString();
         const jsonPayload = JSON.stringify({ exportedAt: now, exchangeRate: '1 USD = 7 CNY', records: currentRecords }, null, 2);
@@ -297,7 +329,7 @@
     };
 
     const daysBetweenInclusive = (start, end) => {
-      const ms = new Date(end) - new Date(start);
+      const ms = new Date(`${end}T00:00:00`) - new Date(`${start}T00:00:00`);
       return Math.max(1, Math.floor(ms / (24 * 60 * 60 * 1000)) + 1);
     };
 
@@ -354,13 +386,10 @@
     };
 
     const getCurrentMonthRange = () => {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = now.getMonth();
-
-      const start = new Date(y, m, 1).toISOString().split('T')[0];
-      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0];
-
+      const easternToday = getTodayInEastern();
+      const [year, month, day] = easternToday.split('-').map(Number);
+      const start = `${year}-${String(month).padStart(2, '0')}-01`;
+      const end = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       return { start, end };
     };
 
@@ -369,7 +398,7 @@
       submitBtn.textContent = '提交并同步';
       cancelEditBtn.style.display = 'none';
       form.reset();
-      dateInput.value = today;
+      dateInput.value = getTodayInEastern();
       nameInput.focus();
     };
 
@@ -417,7 +446,7 @@
           const data = await resp.json();
           const content = base64ToUtf8(data.content);
           const parsed = JSON.parse(content).records || [];
-          currentRecords = parsed.map(normalizeRecord);
+          currentRecords = sortRecords(parsed.map(normalizeRecord));
         }
 
         renderRecords();
@@ -442,8 +471,13 @@
       const formData = new FormData(form);
       const nowIso = new Date().toISOString();
 
-      let amountValue = Number(formData.get('amount'));
       let finalCategory = formData.get('category');
+      const inferredCategory = inferCategoryFromName(formData.get('name'));
+      if (inferredCategory === '收入') {
+        finalCategory = '收入';
+      }
+
+      let amountValue = Number(formData.get('amount'));
 
       if (finalCategory === '收入' && amountValue > 0) {
         amountValue = -amountValue;
@@ -469,6 +503,8 @@
       } else {
         currentRecords.push(record);
       }
+
+      currentRecords = sortRecords(currentRecords);
 
       const wasEditing = Boolean(editingId);
       renderRecords();
