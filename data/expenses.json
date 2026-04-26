@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-24T22:19:42.122Z",
+  "exportedAt": "2026-04-26T15:51:16.212Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -19,6 +19,15 @@
       "amount": -2972.55,
       "createdAt": "2026-04-14T14:43:06.915Z",
       "updatedAt": "2026-04-14T23:22:49.155Z"
+    },
+    {
+      "id": "040ac67f-fc60-43b6-932a-908acc3ff2c2",
+      "date": "2026-04-26",
+      "name": "达美乐披萨",
+      "category": "食品",
+      "amount": 13,
+      "createdAt": "2026-04-26T15:51:16.202Z",
+      "updatedAt": "2026-04-26T15:51:16.202Z"
     },
     {
       "id": "61fe874c-6d02-44de-b735-04b3d0e4b313",
