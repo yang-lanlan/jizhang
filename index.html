@@ -343,8 +343,8 @@
         return;
       }
 
-      const filtered = currentRecords.filter((r) => r.date >= start && r.date <= end && r.category !== '收入');
-      const totalAmountUsd = filtered.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const filtered = currentRecords.filter((r) => r.date >= start && r.date <= end);
+      const totalAmountUsd = filtered.reduce((sum, item) => {return item.category !== '收入' ? sum + Number(item.amount || 0) : sum;}, 0);
       const totalAmountCny = usdToCny(totalAmountUsd);
       const byCategory = {};
 
