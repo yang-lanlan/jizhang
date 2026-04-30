@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-04-30T17:51:03.964Z",
+  "exportedAt": "2026-04-30T17:51:32.503Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -28,15 +28,6 @@
       "amount": 8,
       "createdAt": "2026-04-30T17:46:44.205Z",
       "updatedAt": "2026-04-30T17:46:44.205Z"
-    },
-    {
-      "id": "1e7793b2-e85f-4fce-87f0-a45cfe818073",
-      "date": "2026-04-30",
-      "name": "赌博",
-      "category": "娱乐",
-      "amount": 100,
-      "createdAt": "2026-04-30T17:49:50.272Z",
-      "updatedAt": "2026-04-30T17:49:50.272Z"
     },
     {
       "id": "c0cc475b-7824-488b-b5ce-f2bca1bc354f",
@@ -208,6 +199,15 @@
       "amount": 13,
       "createdAt": "2026-04-26T15:51:16.202Z",
       "updatedAt": "2026-04-26T15:51:16.202Z"
+    },
+    {
+      "id": "1e7793b2-e85f-4fce-87f0-a45cfe818073",
+      "date": "2026-04-24",
+      "name": "赌博",
+      "category": "娱乐",
+      "amount": 100,
+      "createdAt": "2026-04-30T17:49:50.272Z",
+      "updatedAt": "2026-04-30T17:51:32.486Z"
     },
     {
       "id": "2f2858be-6f40-4f18-82ae-6557f59b820e",
