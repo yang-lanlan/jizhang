@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-08T05:10:33.153Z",
+  "exportedAt": "2026-05-08T20:17:33.825Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -19,6 +19,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "4c5dc2ed-1eb6-44f4-9143-dff903fbf4ed",
+      "date": "2026-05-08",
+      "name": "天妇罗",
+      "category": "食品",
+      "amount": 19,
+      "createdAt": "2026-05-08T20:17:33.813Z",
+      "updatedAt": "2026-05-08T20:17:33.813Z"
     },
     {
       "id": "16ffabf3-5954-442e-9795-5209dfb41adc",
