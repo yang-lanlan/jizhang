@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-12T20:32:51.408Z",
+  "exportedAt": "2026-05-12T20:32:57.731Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -19,6 +19,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "f9d02a72-a462-46f3-a9d9-7ca5e284def3",
+      "date": "2026-05-12",
+      "name": "大福",
+      "category": "食品",
+      "amount": 5,
+      "createdAt": "2026-05-12T20:32:57.716Z",
+      "updatedAt": "2026-05-12T20:32:57.716Z"
     },
     {
       "id": "7ec26610-9aba-4d24-b8f1-66b5dc068b78",
