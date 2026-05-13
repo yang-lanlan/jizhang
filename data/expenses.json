@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-13T17:15:41.129Z",
+  "exportedAt": "2026-05-13T23:20:19.313Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -37,6 +37,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "ed2defa2-cdf8-477c-8e62-810bb9e002bf",
+      "date": "2026-05-13",
+      "name": "卖投影",
+      "category": "卖淫",
+      "amount": -25,
+      "createdAt": "2026-05-13T23:20:19.300Z",
+      "updatedAt": "2026-05-13T23:20:19.300Z"
     },
     {
       "id": "c92a247f-0329-4c41-95ae-1aa8bb0fa433",
