@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-13T23:20:35.086Z",
+  "exportedAt": "2026-05-13T23:27:50.308Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -37,6 +37,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "787ffc6b-6156-4c94-a1ff-0a96e96cfe94",
+      "date": "2026-05-13",
+      "name": "寿司",
+      "category": "食品",
+      "amount": 18,
+      "createdAt": "2026-05-13T23:27:50.295Z",
+      "updatedAt": "2026-05-13T23:27:50.295Z"
     },
     {
       "id": "b10b6f88-6fe1-48f8-9b35-1a4910a7471f",
