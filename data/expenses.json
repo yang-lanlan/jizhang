@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-13T17:12:55.874Z",
+  "exportedAt": "2026-05-13T17:15:23.309Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -10,6 +10,15 @@
       "amount": 3000,
       "createdAt": "2026-04-12T21:21:18.154Z",
       "updatedAt": "2026-04-30T17:51:57.321Z"
+    },
+    {
+      "id": "73ede125-98f0-4724-b40a-425c6f973d22",
+      "date": "2026-05-15",
+      "name": "心理咨询",
+      "category": "健康",
+      "amount": 8,
+      "createdAt": "2026-05-13T17:15:23.294Z",
+      "updatedAt": "2026-05-13T17:15:23.294Z"
     },
     {
       "id": "bbb6c220-0992-4bdb-8f8f-b137d8b5029f",
