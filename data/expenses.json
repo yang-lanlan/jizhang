@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-13T16:25:27.149Z",
+  "exportedAt": "2026-05-13T16:49:53.932Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -19,6 +19,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "a95445cc-a218-47a9-881c-d3278eefeedc",
+      "date": "2026-05-13",
+      "name": "减肥针",
+      "category": "健康",
+      "amount": 25,
+      "createdAt": "2026-05-13T16:49:53.914Z",
+      "updatedAt": "2026-05-13T16:49:53.914Z"
     },
     {
       "id": "8985af8a-81b4-4962-badc-f09347abc24b",
