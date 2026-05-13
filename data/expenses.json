@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-13T16:49:53.932Z",
+  "exportedAt": "2026-05-13T17:12:49.903Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -19,6 +19,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "f9602e5d-4aba-4f82-b948-17d9ed829f8e",
+      "date": "2026-05-13",
+      "name": "奥美拉挫",
+      "category": "健康",
+      "amount": 16,
+      "createdAt": "2026-05-13T17:12:49.889Z",
+      "updatedAt": "2026-05-13T17:12:49.889Z"
     },
     {
       "id": "a95445cc-a218-47a9-881c-d3278eefeedc",
