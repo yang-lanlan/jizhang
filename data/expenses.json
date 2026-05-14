@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-14T21:25:57.697Z",
+  "exportedAt": "2026-05-14T21:26:05.699Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -55,6 +55,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "f9b2884f-cb73-4a57-bf70-1c7447647021",
+      "date": "2026-05-14",
+      "name": "二手显示器",
+      "category": "百货",
+      "amount": 30,
+      "createdAt": "2026-05-14T21:26:05.686Z",
+      "updatedAt": "2026-05-14T21:26:05.686Z"
     },
     {
       "id": "274650e0-6ee1-4257-9ffa-329add7392bb",
