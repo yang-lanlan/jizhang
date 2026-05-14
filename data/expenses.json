@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-14T21:26:05.699Z",
+  "exportedAt": "2026-05-14T21:26:10.733Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -55,6 +55,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "687bec72-3c38-4dae-b29b-57790bf675ad",
+      "date": "2026-05-14",
+      "name": "甜甜圈",
+      "category": "食品",
+      "amount": 8,
+      "createdAt": "2026-05-14T21:26:10.720Z",
+      "updatedAt": "2026-05-14T21:26:10.720Z"
     },
     {
       "id": "f9b2884f-cb73-4a57-bf70-1c7447647021",
