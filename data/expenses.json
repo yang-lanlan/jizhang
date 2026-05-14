@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-14T21:58:42.326Z",
+  "exportedAt": "2026-05-14T21:59:07.924Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -55,6 +55,15 @@
       "amount": 100,
       "createdAt": "2026-04-30T17:49:55.538Z",
       "updatedAt": "2026-04-30T17:51:03.945Z"
+    },
+    {
+      "id": "6bf93486-9f62-4e2b-8aea-b79fb1852586",
+      "date": "2026-05-14",
+      "name": "二手电饭煲",
+      "category": "百货",
+      "amount": 15,
+      "createdAt": "2026-05-14T21:59:07.910Z",
+      "updatedAt": "2026-05-14T21:59:07.910Z"
     },
     {
       "id": "0a99cc9c-e4ce-4aad-855b-fa2a8f8978c6",
