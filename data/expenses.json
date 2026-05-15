@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-15T18:53:22.905Z",
+  "exportedAt": "2026-05-15T18:53:31.114Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -37,6 +37,15 @@
       "amount": 120,
       "createdAt": "2026-05-14T00:04:56.769Z",
       "updatedAt": "2026-05-14T00:04:56.769Z"
+    },
+    {
+      "id": "82b5ab0f-fbc0-4c80-bd9f-f1126770cf65",
+      "date": "2026-05-15",
+      "name": "寿司自助",
+      "category": "食品",
+      "amount": 45,
+      "createdAt": "2026-05-15T18:53:31.100Z",
+      "updatedAt": "2026-05-15T18:53:31.100Z"
     },
     {
       "id": "e541edc6-48a3-44f9-9f60-99a78e2f0265",
