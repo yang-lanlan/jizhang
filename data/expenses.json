@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-15T03:20:23.746Z",
+  "exportedAt": "2026-05-15T03:21:52.569Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -55,6 +55,15 @@
       "amount": 8,
       "createdAt": "2026-05-13T17:15:23.294Z",
       "updatedAt": "2026-05-13T17:15:23.294Z"
+    },
+    {
+      "id": "c9cde74a-59d7-4cb0-b0fd-48d827f934bf",
+      "date": "2026-05-14",
+      "name": "茶叶和运费",
+      "category": "食品",
+      "amount": 25,
+      "createdAt": "2026-05-15T03:21:52.564Z",
+      "updatedAt": "2026-05-15T03:21:52.564Z"
     },
     {
       "id": "c4b27495-eb3e-4866-9107-f2662c93f441",
