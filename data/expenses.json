@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-16T01:08:37.476Z",
+  "exportedAt": "2026-05-16T01:08:55.642Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -192,6 +192,15 @@
       "updatedAt": "2026-05-14T18:12:36.609Z"
     },
     {
+      "id": "a95445cc-a218-47a9-881c-d3278eefeedc",
+      "date": "2026-05-13",
+      "name": "吸毒",
+      "category": "健康",
+      "amount": 25,
+      "createdAt": "2026-05-13T16:49:53.914Z",
+      "updatedAt": "2026-05-16T01:08:55.637Z"
+    },
+    {
       "id": "59a5ac6a-5392-4d48-bf6a-1125cff2d50a",
       "date": "2026-05-13",
       "name": "地铁",
@@ -262,15 +271,6 @@
       "amount": 16,
       "createdAt": "2026-05-13T17:12:49.889Z",
       "updatedAt": "2026-05-13T17:12:49.889Z"
-    },
-    {
-      "id": "a95445cc-a218-47a9-881c-d3278eefeedc",
-      "date": "2026-05-13",
-      "name": "减肥针",
-      "category": "健康",
-      "amount": 25,
-      "createdAt": "2026-05-13T16:49:53.914Z",
-      "updatedAt": "2026-05-13T16:49:53.914Z"
     },
     {
       "id": "8985af8a-81b4-4962-badc-f09347abc24b",
