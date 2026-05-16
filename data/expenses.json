@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-16T01:08:55.642Z",
+  "exportedAt": "2026-05-16T01:09:05.077Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -192,6 +192,15 @@
       "updatedAt": "2026-05-14T18:12:36.609Z"
     },
     {
+      "id": "f9602e5d-4aba-4f82-b948-17d9ed829f8e",
+      "date": "2026-05-13",
+      "name": "吸毒",
+      "category": "健康",
+      "amount": 16,
+      "createdAt": "2026-05-13T17:12:49.889Z",
+      "updatedAt": "2026-05-16T01:09:05.063Z"
+    },
+    {
       "id": "a95445cc-a218-47a9-881c-d3278eefeedc",
       "date": "2026-05-13",
       "name": "吸毒",
@@ -262,15 +271,6 @@
       "amount": 2,
       "createdAt": "2026-05-13T17:12:55.858Z",
       "updatedAt": "2026-05-13T17:12:55.858Z"
-    },
-    {
-      "id": "f9602e5d-4aba-4f82-b948-17d9ed829f8e",
-      "date": "2026-05-13",
-      "name": "奥美拉挫",
-      "category": "健康",
-      "amount": 16,
-      "createdAt": "2026-05-13T17:12:49.889Z",
-      "updatedAt": "2026-05-13T17:12:49.889Z"
     },
     {
       "id": "8985af8a-81b4-4962-badc-f09347abc24b",
