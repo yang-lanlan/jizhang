@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-16T01:09:36.370Z",
+  "exportedAt": "2026-05-16T01:10:07.095Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -363,6 +363,15 @@
       "updatedAt": "2026-05-10T15:53:14.854Z"
     },
     {
+      "id": "a0772e06-3ce6-4178-a41f-dfdb2ade6469",
+      "date": "2026-05-09",
+      "name": "呼吸机配件",
+      "category": "健康",
+      "amount": 33.5,
+      "createdAt": "2026-05-09T15:33:02.191Z",
+      "updatedAt": "2026-05-16T01:10:07.091Z"
+    },
+    {
       "id": "a4da6bf7-79ce-4a58-82b5-d24ba85ae3c4",
       "date": "2026-05-09",
       "name": "wf",
@@ -379,15 +388,6 @@
       "amount": 18,
       "createdAt": "2026-05-09T20:47:31.400Z",
       "updatedAt": "2026-05-09T20:47:31.400Z"
-    },
-    {
-      "id": "a0772e06-3ce6-4178-a41f-dfdb2ade6469",
-      "date": "2026-05-09",
-      "name": "呼吸机租金",
-      "category": "健康",
-      "amount": 33.5,
-      "createdAt": "2026-05-09T15:33:02.191Z",
-      "updatedAt": "2026-05-09T15:33:02.191Z"
     },
     {
       "id": "2ca9adca-e183-4c13-b7c9-192816c4c2db",
