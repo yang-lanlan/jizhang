@@ -159,14 +159,15 @@
       '食品': ['weee', 'wf', 'af', 'yami', 'wholefood', 'wholefoods', 'acme', '缺德舅', '大华', '日料', '寿司', '海底捞', '火锅', '星巴克', '麦当劳', '冰块'],
       '百货': ['target', 'muji', '阿里巴巴', 'ikea'],
       '交通': ['地铁', '公交', '打车'],
-      '健康': ['挂号费', '心理咨询', '氟西汀', '减肥针', '呼吸机']
+      '娱乐': ['嫖娼', '剧本杀'],
+      '健康': ['挂号费', '心理咨询', '吸毒', '减肥针', '呼吸机']
     };
 
     const inferCategoryFromName = (name) => {
       const inputValue = String(name || '').trim().toLowerCase();
       if (!inputValue) return null;
 
-      if (inputValue.includes('卖淫')) {
+      if (inputValue.includes('卖')) {
         return '卖淫';
       }
 
