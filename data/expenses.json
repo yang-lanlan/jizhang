@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-05-17T04:40:48.785Z",
+  "exportedAt": "2026-05-17T04:40:58.508Z",
   "exchangeRate": "1 USD = 7 CNY",
   "records": [
     {
@@ -22,12 +22,12 @@
     },
     {
       "id": "5b6ac2d9-45e9-41c8-8c7f-199efae14e24",
-      "date": "2026-05-17",
+      "date": "2026-05-16",
       "name": "米线",
       "category": "食品",
       "amount": 15,
       "createdAt": "2026-05-17T04:40:48.771Z",
-      "updatedAt": "2026-05-17T04:40:48.771Z"
+      "updatedAt": "2026-05-17T04:40:58.466Z"
     },
     {
       "id": "329b17e2-e9b3-4797-894f-b473fd22482c",
